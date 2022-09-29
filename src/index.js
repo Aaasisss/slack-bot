@@ -1,7 +1,9 @@
 require("dotenv").config();
+const https = require("https");
+const axios = require("axios");
+const { WebClient, LogLevel } = require("@slack/web-api");
 
 async function main(event, context) {
-  
   console.log(event);
 
   //event is an object, however, the body of the event is in JSON,
@@ -20,8 +22,27 @@ async function main(event, context) {
         body: "verification failed",
       };
     }
-    
+  }
+
+  if (
+    !body.event.bot_id &&
+    body.event.client_msg_id &&
+    body.event.type === "message"
+  ) {
+    var text = `<@${body.event.user}> isn't AWS Lambda awesome?`;
+
+    const url = "https://slack.com/api/chat.postMessage";
+    const res = await axios.post(
+      url,
+      { channel: body.event.channel, text: text },
+      {
+        headers: {
+          authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+          "Content-Type": "application/json;charset=utf-8",
+        },
+      }
+    );
+    console.log("RESULT: ", res.data);
   }
 }
 module.exports = { main };
-
