@@ -111,3 +111,5 @@ cdk.out
 .DS_Store
 #local testing purpose
 event.js
+BotEvent.js
+UserEvent.js
